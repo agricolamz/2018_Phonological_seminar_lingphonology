@@ -2,7 +2,7 @@
 
 % Presento style file
 \usepackage{config/presento}
-
+\usepackage{forest}
 % custom command and packages
 \input{config/custom-command}
 
@@ -56,7 +56,30 @@
 {\Large lingphonology} --- пакет для языка R
 \end{frame}
 
-\begin{frame}{Собственный формат: IPA}
+\begin{frame}{Общий формат}
+\begin{forest}
+[
+{\begin{tabular}{|l|l|l|l|l|l|l|}
+\hline
+text id & id & word & translation & … & POS & … \\ \hline
+… & … & … & … & … & … & …\\ \hline
+4 & 231 &  ʁats'a & кузнечик & … & N & … \\ \hline
+… & … & … & … & … & …& …\\ \hline
+\end{tabular}}
+, for tree = {edge=<-,  grow' = west}
+	[тексты .TextGrid]
+	[словарь .csv]
+	[тексты .txt]
+	[тексты Toolbox]
+	[словарь Toolbox]
+	[тексты .eaf]
+	[тексты FLEx]
+	[словарь FLEx]]
+\end{forest}
+\end{frame}
+
+
+\begin{frame}{Конвертер из пользовательской транскрипции в IPA}
 \begin{itemize}
 \item `кузнечик' (зиловский, андийский)
 \begin{itemize}
@@ -79,33 +102,73 @@
 \end{itemize}
 \end{frame}
 
-\begin{frame}{Проблемы IPA}
+\begin{frame}{Конвертер из пользовательской транскрипции в IPA}
 \begin{itemize}
 \item 2 января 2008 Салли Томпсон опубликовала статью в блоге Language Log с заголовком \href{http://itre.cis.upenn.edu/~myl/languagelog/archives/005287.html}{``Why I Don't Love the International Phonetic Alphabet''}
 \begin{itemize}
 \item графические минусы (неудобно писать, печатать и т. п.)
-\item аффрикаты vs. сочетания звуков: польские tʃɨ `три' vs. t͡ʃɨ `вопросительная частица'
-\item передний гласный a \pause и его курсивный вариант \textit{a} \pause
+\item аффрикаты vs. сочетания звуков: польские {\Large tʃɨ} `три' vs. {\Large t͡ʃɨ} `вопросительная частица'
+\item передний гласный {\Large a} \pause и его курсивный вариант {\Large \textit{a}} \pause
 \end{itemize}
 \item мои собственные претензии
 \begin{itemize}
 \item отсутствие некоторых звуков, например, свистяще-шипящих
 \item многозначность. Угадайте, как описан русский в \href{https://www.cambridge.org/core/services/aop-cambridge-core/content/view/55589EC639ADEF1764B5ECD0B76970FA/S0025100314000395a.pdf/russian.pdf}{журнале IPA}?\\
-ʃ vs. ʃʲ(ː) или ʃ vs. ɕ(ː) или ʃˠ vs. ʃʲ(ː) или ʃˠ vs. ɕ(ː) или ʂ vs. ʃ(ː)\\
-c и ɟ --- обозначают разное в разных грамматиках
+{\Large ʃ} vs. {\Large ʃʲ(ː)} или {\Large ʃ} vs. {\Large ɕ(ː)} или {\Large ʃˠ} vs. {\Large ʃʲ(ː)} или или {\Large ʂ} vs.{\Large  ʃ(ː)}\\
+{\Large c} и {\Large ɟ} --- обозначают разное в разных грамматиках
 \item причем у нас разные привычки с Максимом Федотовым, Инной Зибер, Митей Николаевым, Андреем Никулиным
 \item каждый раз когда я открываю статью IPA журнала о языке, который я знаю, то обнаруживаю что-то странное
 \end{itemize}
 \end{itemize}
 \end{frame}
 
-\begin{frame}{IPA}
+\begin{frame}{Конвертер из пользовательской транскрипции в IPA}
 \begin{itemize}
 \item IPA из базы данных \href{http://phoible.org/}{Phoible}
 \begin{itemize}
-\item 2160 звуков, затранскрибированные в IPA
-\item \href{http://phoible.org/parameters/1F27FEFCD8402C09E00300258B5A7EE2#2/-3.9/75.2}{база данных} (но ей стоит верить крайне осторожно, см. доклад Саши Архипова... сто лет назад)
+\item 2160 звуков 1672 языков, затранскрибированные в IPA
+\item \href{http://phoible.org/parameters/1AD6D96C35E6ADA62F1EAF5B167F75F7}{база данных} (но ей стоит верить крайне осторожно, см. доклад Саши Архипова... сто лет назад)
+\item SPE признаки для каждого звука
 \end{itemize}
+\item но тут же возникли проблемы: \pause
+\begin{itemize}
+\item в базе данных не оказалось  {\Large dʒ}\pause, потому что там {\Large d̠ʒ} \pause
+\item в базе данных не оказалось  {\Large pʼʷ}\pause, потому что там {\Large pʷʼ} \pause
+\item в базе данных не оказалось {\Large çʷː}\pause. Просто не оказалось.
+\end{itemize}
+\item кроме соответствия некоторому изводу IPA, конвертер нужно проверять на омографию
+\item омографии можно избежать, если научиться обрабатывать графемные контексты (<е> --- в начале слова vs. в середине слова в русском) \pause
+\item должны быть возможно исключить какие-то фрагменты (например, заимствования, идиофоны)
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Общий формат → данные}
+\begin{itemize}
+\item инвентари и частотность
+\item фонотактика
+\begin{itemize}
+\item смотрим на все консонантные кластеры
+\item смотрим на все вокалические сочетания
+\item смотрим на (квази)гармонические эффекты
+\item смотрим на позицию ударения
+\item смотрим на поведение тонов
+\end{itemize}
+\item слоговая структура
+\begin{enumerate}
+\item смотрим на все инициали
+\item смотрим на все финали
+\item моделируем общую схему слога
+\item применяем модель ко всем слогам и смотрим, где она ломается
+\end{enumerate}
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Заключение}
+\begin{itemize}
+\item в целом эта система позволит создавать data-driven фонологические описания
+\item это в свою очередь позволит ввести меру доверия фонологического описания: описанию, основанном на списке из 700 слов, доверия меньше, чем описанию из 5000 слов
+\item проверять исследовательские данные --- в случае, если какие-то единицы есть в словаре или тексте, но нет в конвертере
+\item garbage in --- garbage out: если кто-то не различил в своих данных дентальные и альвеолярные t, то и в фонологический отчет это не попадет
 \end{itemize}
 \end{frame}
 
