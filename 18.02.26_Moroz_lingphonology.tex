@@ -1,0 +1,116 @@
+\documentclass[13pt, t]{beamer}
+
+% Presento style file
+\usepackage{config/presento}
+
+% custom command and packages
+\input{config/custom-command}
+
+% Information
+\title{\huge lingphonology}
+\subtitle{проект компьютерной программы для автоматического описания фонологии языка (на примере андийского)}
+\author[shortname]{Г. А. Мороз}
+\institute{Международная лаборатория языковой конвергенции, НИУ ВШЭ}
+\date{\begin{center} 
+\large 26 февраля 2018 г. \bigskip \\ {\color{colorblue} Фонологический семинар (МГУ)} \end{center}}
+
+\begin{document}
+
+\begin{frame}[plain]
+\maketitle
+\end{frame}
+
+\begin{frame}{Предыстория}
+\begin{itemize}
+\item зиловский диалект андийского языка (нахско-дагестанские)
+\item несколько полевых поездок в 2016, 2017 годах
+\item участники: Неж Рошан, Самира Ферхеес, Александра Мартынова, Айгуль Закирова
+\item маленький корпус, небольшой словарь в  FLEx около 2500 корней и аффиксов \pause
+\item и вот настало время писать фонологический раздел в статье, посвященной описанию данного идиома \pause
+\item вместо того, чтобы скопировать уже готовый текст я решил сделать data-driven описание
+\begin{itemize}
+\item  выкачал словарь из FLEx в формате .xml
+\item переконвертировал его в формат .csv
+\item запустил в R программу, которая бы посчитала мне все звуки… \pause
+\item …и  обнаружил несколько звуков, которые не было в описании
+\end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Мечты}
+\begin{enumerate}
+\item Исследователь получает свои данные в каком-то машиночитаемом формате.
+\item Программа переводит все из самых разных форматов (простые~.csv и .txt, .TextGrid из Praat, .xml из FLEx, .xml из ELAN, Toolbox и др.) в некоторый свой формат.
+\item Программа анализирует данные и хранит где-то промежуточные результаты
+\item Программа автоматически составляет фонологический отчет:
+\begin{itemize}
+\item набор и частотность всех консонантных сегментов
+\item набор и частотность всех вокалических сегментов
+\item инвентарь супрасегментных единицы
+\item описание слоговой структуры, частотность тех или иных слоговых структур
+\item фонотактические ограничения (с контекстом разного размера)
+\item ограничения уровня слова (гармония и гармонические эффекты, ударения, тоны...)
+\end{itemize}
+\end{enumerate}
+\vfill
+{\Large lingphonology} --- пакет для языка R
+\end{frame}
+
+\begin{frame}{Собственный формат: IPA}
+\begin{itemize}
+\item `кузнечик' (зиловский, андийский)
+\begin{itemize}
+\item ʁat͡sa
+\item ʁatsa
+\item ʁaca
+\item гъацIа
+\item гъац1а
+\item … \pause
+\end{itemize}
+\item[→] нужно, чтобы пользователь предоставил соответствия пользовательской транскрипции и IPA \pause
+\item[pro] мы получим соответствия единиц в пользовательской нотации с уже разработанной системой фонологических признаков, т. е. мы сможем
+\begin{itemize}
+\item  отличить гласные от согласных
+\item строить модели слога
+\item находить нарушение иерархии сонорности
+\item …
+\end{itemize}
+\item[contra] то чего в  IPA нет, придется описывать обходным путем
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Проблемы IPA}
+\begin{itemize}
+\item 2 января 2008 Салли Томпсон опубликовала статью в блоге Language Log с заголовком \href{http://itre.cis.upenn.edu/~myl/languagelog/archives/005287.html}{``Why I Don't Love the International Phonetic Alphabet''}
+\begin{itemize}
+\item графические минусы (неудобно писать, печатать и т. п.)
+\item аффрикаты vs. сочетания звуков: польские tʃɨ `три' vs. t͡ʃɨ `вопросительная частица'
+\item передний гласный a \pause и его курсивный вариант \textit{a} \pause
+\end{itemize}
+\item мои собственные претензии
+\begin{itemize}
+\item отсутствие некоторых звуков, например, свистяще-шипящих
+\item многозначность. Угадайте, как описан русский в \href{https://www.cambridge.org/core/services/aop-cambridge-core/content/view/55589EC639ADEF1764B5ECD0B76970FA/S0025100314000395a.pdf/russian.pdf}{журнале IPA}?\\
+ʃ vs. ʃʲ(ː) или ʃ vs. ɕ(ː) или ʃˠ vs. ʃʲ(ː) или ʃˠ vs. ɕ(ː) или ʂ vs. ʃ(ː)\\
+c и ɟ --- обозначают разное в разных грамматиках
+\item причем у нас разные привычки с Максимом Федотовым, Инной Зибер, Митей Николаевым, Андреем Никулиным
+\item каждый раз когда я открываю статью IPA журнала о языке, который я знаю, то обнаруживаю что-то странное
+\end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}{IPA}
+\begin{itemize}
+\item IPA из базы данных \href{http://phoible.org/}{Phoible}
+\begin{itemize}
+\item 2160 звуков, затранскрибированные в IPA
+\item \href{http://phoible.org/parameters/1F27FEFCD8402C09E00300258B5A7EE2#2/-3.9/75.2}{база данных} (но ей стоит верить крайне осторожно, см. доклад Саши Архипова... сто лет назад)
+\end{itemize}
+\end{itemize}
+\end{frame}
+
+\framecard[colorblue]{{\color{colorwhite} \huge Спасибо за внимание! \bigskip\\
+\Large Пишите письма\\
+agricolamz@gmail.com}}
+
+\end{document}
